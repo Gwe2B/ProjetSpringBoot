@@ -2,6 +2,7 @@ package com.gwe2b.mymovies.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +13,10 @@ import com.gwe2b.mymovies.model.Movie;
 
 @RestController
 public class MoviesController {
-    private List<Movie> movies = new ArrayList<>();
+    private static List<Movie> movies = new ArrayList<>();
+    public static List<Movie> getMoviesList() {
+        return movies;
+    }
 
     {
         Actor actor1 = new Actor("Jason", "Statam", "26-07-1967");
@@ -35,5 +39,22 @@ public class MoviesController {
         movies.add(movie1); movies.add(movie2); movies.add(movie3);
     }
 
-    
+    @GetMapping(value = "/movies")
+    public List<Movie> getMovies() {
+        return movies;
+    }
+
+    @GetMapping(value = "/movies/{moviename}")
+    public Movie getMovieByNom(@PathVariable(value = "moviename") String moviename) {
+        return movies.stream()
+            .filter(movie -> movie.getTitre().equals(moviename))
+            .findFirst().orElse(null);
+    }
+
+    @GetMapping(value = "/movies/out/{sortie}")
+    public List<Movie> getMovieBySortie(@PathVariable(value = "sortie") int sortie) {
+        return movies.stream()
+            .filter(movie -> movie.getSortie() == sortie)
+            .collect(Collectors.toList());
+    }
 }

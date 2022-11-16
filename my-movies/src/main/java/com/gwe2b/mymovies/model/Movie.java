@@ -22,4 +22,16 @@ public class Movie {
     public void setRealisateur(String realisateur) { this.realisateur = realisateur; }
     public void setPrincipalActor(Actor actor) { this.principalActor = actor; }
     public void setSortie(int sortie) { this.sortie = sortie; }
+    
+    @Override
+    public boolean equals(Object obj) {
+        boolean r = false;
+
+        if(obj instanceof Movie) {
+            Movie mov = (Movie)obj;
+            r = mov.getTitre().equals(this.getTitre()) && mov.getRealisateur().equals(this.getRealisateur()) && mov.getSortie() == this.getSortie();
+        }
+
+        return r;
+    }
 }
