@@ -2,7 +2,6 @@ package com.gwe2b.mymovies.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gwe2b.mymovies.model.Actor;
 import com.gwe2b.mymovies.model.Movie;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+@Api
 @RestController
 public class ActorsController {
     private List<Actor> actors = new ArrayList<>();
@@ -44,11 +49,29 @@ public class ActorsController {
         actors.add(actor1); actors.add(actor2); actors.add(actor3); 
     }
 
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Bad request"),
+        @ApiResponse(code = 401, message = "Not Authorized"),
+        @ApiResponse(code = 403, message = "Forbidden!"),
+        @ApiResponse(code = 404, message = "Not Found")
+    })
+
+    @ApiOperation(
+        value = "List the actors",
+        response = Iterable.class,
+        notes = "This method list all actors"
+    )
     @GetMapping(value = "/actors")
     public List<Actor> getActors() {
         return actors;
     }
 
+    @ApiOperation(
+        value = "List the actors",
+        response = Actor.class,
+        notes = "This return a specific actor corresponding to the given lastname"
+    )
     @GetMapping(value = "/actors/{nom}")
     public Actor getActorByNom(@PathVariable(value = "nom") String nom) {
         return actors.stream()
@@ -56,6 +79,11 @@ public class ActorsController {
             .findFirst().orElse(null);
     }
 
+    @ApiOperation(
+        value = "List the actors",
+        response = Iterable.class,
+        notes = "This method list all actors that has played in the specified movie"
+    )
     @GetMapping(value = "/actors/in/{movie}")
     public List<Actor> getActorsInMovie(@PathVariable(value = "movie") String movie) {
         Movie movieObj = MoviesController.getMoviesList().stream()

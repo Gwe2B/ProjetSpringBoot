@@ -11,6 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gwe2b.mymovies.model.Actor;
 import com.gwe2b.mymovies.model.Movie;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+@Api
 @RestController
 public class MoviesController {
     private static List<Movie> movies = new ArrayList<>();
@@ -39,11 +45,29 @@ public class MoviesController {
         movies.add(movie1); movies.add(movie2); movies.add(movie3);
     }
 
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Bad request"),
+        @ApiResponse(code = 401, message = "Not Authorized"),
+        @ApiResponse(code = 403, message = "Forbidden!"),
+        @ApiResponse(code = 404, message = "Not Found")
+    })
+
+    @ApiOperation(
+        value = "List the movies",
+        response = Iterable.class,
+        notes = "This method list all movies"
+    )
     @GetMapping(value = "/movies")
     public List<Movie> getMovies() {
         return movies;
     }
 
+    @ApiOperation(
+        value = "List the movies",
+        response = Movie.class,
+        notes = "This method list the movie corresponding to the title"
+    )
     @GetMapping(value = "/movies/{moviename}")
     public Movie getMovieByNom(@PathVariable(value = "moviename") String moviename) {
         return movies.stream()
@@ -51,6 +75,11 @@ public class MoviesController {
             .findFirst().orElse(null);
     }
 
+    @ApiOperation(
+        value = "List the movies",
+        response = Iterable.class,
+        notes = "This method list all the movies released within the specified year"
+    )
     @GetMapping(value = "/movies/out/{sortie}")
     public List<Movie> getMovieBySortie(@PathVariable(value = "sortie") int sortie) {
         return movies.stream()
